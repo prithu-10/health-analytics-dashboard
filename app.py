@@ -6,6 +6,7 @@ from model import predict_future
 # Run R script
 subprocess.run(["Rscript", "eda.R"])
 
+
 # OAuth
 from flask_dance.contrib.google import make_google_blueprint, google
 
