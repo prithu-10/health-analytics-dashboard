@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>COVID Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="sidebar">
+    <h2>HealthAI</h2>
+    <p>Dashboard</p>
+</div>
+
+<div class="main">
+
+<h1>COVID Analytics</h1>
+
+<select id="country">
+    <option value="India">India</option>
+    <option value="United States">United States</option>
+</select>
+
+<div class="kpi-grid">
+    <div class="card"><h4>Cases</h4><h2 id="cases"></h2></div>
+    <div class="card"><h4>Deaths</h4><h2 id="deaths"></h2></div>
+    <div class="card"><h4>Vaccinated</h4><h2 id="vacc"></h2></div>
+    <div class="card"><h4>Tomorrow</h4><h2 id="tomorrowCases"></h2></div>
+</div>
+<div class="prediction-box">
+
+    <h3>Predict Tomorrow Cases</h3>
+
+    <label>Vaccination (increase)</label>
+    <input type="number" id="vaccInput" placeholder="e.g. +10000">
+
+    <label>Deaths (expected)</label>
+    <input type="number" id="deathInput" placeholder="e.g. +100">
+
+    <button onclick="runPrediction()">Predict</button>
+
+    <h2 id="result"></h2>
+
+</div>
+<button onclick="runPrediction()">Predict</button>
+<div class="chart-container">
+    <canvas id="casesChart"></canvas>
+</div>
+<div class="row">
+
+    <!-- Deaths Graph -->
+    <div class="box">
+        <h3>Deaths Trend</h3>
+        <canvas id="deathsChart"></canvas>
+    </div>
+
+    <!-- Insights -->
+    <div class="box">
+        <h3>Insights</h3>
+        <p>Vaccination reduces growth rate</p>
+        <p>Deaths follow case spikes</p>
+        <p>Policy impacts spread</p>
+    </div>
+
+</div>
+
+<div class="r-grid">
+    <img src="/static/cases.png">
+    <img src="/static/deaths.png">
+    <img src="/static/vaccine.png">
+    <img src="/static/heatmap.png">
+</div>
+
+</div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
