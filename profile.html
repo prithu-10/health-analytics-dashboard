@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - Healthify</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="theme-root">
+  <div class="dashboard-shell">
+    <aside class="sidebar red-side">
+      <div class="logo">HEALTH<span>IFY</span></div>
+
+      <div class="menu-group">
+        <div class="menu-title">MENU</div>
+        <a class="menu-item" href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a class="menu-item active" href="{{ url_for('profile') }}">Profile</a>
+        <a class="menu-item" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <div class="topbar">
+        <div>
+          <h1>User Profile</h1>
+          <p>Manage personal details, medical history, and country-wise relief information.</p>
+        </div>
+
+        <div class="top-actions">
+          <button id="themeToggle" class="theme-btn">🌙 Dark</button>
+        </div>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-box">
+            {% for message in messages %}
+              <div class="flash-item">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <section class="profile-grid">
+        <div class="profile-card">
+          <h2>Personal Details</h2>
+          <form method="POST" class="auth-form">
+            <label>FULL NAME</label>
+            <input type="text" name="full_name" value="{{ user['full_name'] or '' }}">
+
+            <label>ROLE</label>
+            <select name="role" class="select-box">
+              <option {% if user['role']=='Clinician' %}selected{% endif %}>Clinician</option>
+              <option {% if user['role']=='Researcher' %}selected{% endif %}>Researcher</option>
+              <option {% if user['role']=='Admin' %}selected{% endif %}>Admin</option>
+              <option {% if user['role']=='Policy Officer' %}selected{% endif %}>Policy Officer</option>
+            </select>
+
+            <label>PHONE</label>
+            <input type="text" name="phone" value="{{ user['phone'] or '' }}">
+
+            <label>COUNTRY</label>
+            <select name="country" class="select-box">
+              <option {% if user['country']=='India' %}selected{% endif %}>India</option>
+              <option {% if user['country']=='United States' %}selected{% endif %}>United States</option>
+              <option {% if user['country']=='Brazil' %}selected{% endif %}>Brazil</option>
+              <option {% if user['country']=='Japan' %}selected{% endif %}>Japan</option>
+              <option {% if user['country']=='Germany' %}selected{% endif %}>Germany</option>
+              <option {% if user['country']=='France' %}selected{% endif %}>France</option>
+              <option {% if user['country']=='Other' %}selected{% endif %}>Other</option>
+            </select>
+
+            <label>PREVIOUS MEDICAL CONDITIONS</label>
+            <textarea name="previous_medical_conditions" rows="5" class="text-area">{{ user['previous_medical_conditions'] or '' }}</textarea>
+
+            <label class="checkbox-line">
+              <input type="checkbox" name="two_factor_enabled" {% if user['two_factor_enabled'] %}checked{% endif %}>
+              <span>Enable OTP for login</span>
+            </label>
+
+            <button type="submit" class="primary-btn red-btn">Save Profile</button>
+          </form>
+        </div>
+
+        <div class="profile-card">
+          <h2>Account Snapshot</h2>
+          <div class="info-block"><strong>Username:</strong> {{ user['username'] }}</div>
+          <div class="info-block"><strong>Email:</strong> {{ user['email'] }}</div>
+          <div class="info-block"><strong>Last Login:</strong> {{ user['last_login'] if user['last_login'] else 'No login recorded yet' }}</div>
+          <div class="info-block"><strong>Country:</strong> {{ user['country'] }}</div>
+
+          <h2 style="margin-top: 28px;">Government Relief Funds</h2>
+
+          {% if funds and funds|length > 0 %}
+            {% for fund in funds %}
+              <div class="relief-card">
+                <h3>{{ fund.name }}</h3>
+                <p><strong>Description:</strong> {{ fund.description }}</p>
+                <p><strong>Eligibility:</strong> {{ fund.eligibility }}</p>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="relief-card">
+              <h3>No government relief fund info available</h3>
+              <p>We currently do not have mapped relief support details for this country.</p>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

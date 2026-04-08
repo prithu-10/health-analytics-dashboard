@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify OTP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="auth-page simple-page">
+  <div class="simple-card">
+    <div class="section-tag">OTP VERIFICATION</div>
+    <h2>Enter verification code</h2>
+    <p class="subtitle">For demo mode, the OTP is printed in the terminal.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-box">
+          {% for message in messages %}
+            <div class="flash-item">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <label>6-DIGIT OTP</label>
+      <input type="text" name="otp" maxlength="6" required>
+      <button type="submit" class="primary-btn red-btn">Verify OTP</button>
+    </form>
+
+    <div class="bottom-links">
+      <a href="{{ url_for('resend_otp') }}">Resend OTP</a>
+      <span>•</span>
+      <a href="{{ url_for('login') }}">Back to login</a>
+    </div>
+  </div>
+</body>
+</html>
