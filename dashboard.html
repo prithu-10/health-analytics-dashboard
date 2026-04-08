@@ -1,82 +1,275 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>COVID Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthify Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
+<body class="theme-root">
+  <div class="dashboard-shell">
+    <aside class="sidebar red-side">
+      <div class="logo">HEALTH<span>IFY</span></div>
 
-<body>
+      <div class="menu-group">
+        <div class="menu-title">INTELLIGENCE</div>
+        <a class="menu-item active" href="#top">Risk Console</a>
+        <a class="menu-item" href="#reactiveSection">Strain Monitor</a>
+        <a class="menu-item" href="#graphsSection">Visual Analytics</a>
+      </div>
 
-<div class="layout">
+      <div class="menu-group">
+        <div class="menu-title">ACCESS</div>
+        <a class="menu-item" href="{{ url_for('profile') }}">Profile</a>
+        <a class="menu-item" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </aside>
 
-<div class="sidebar">
-    <h2>HealthAI</h2>
-    <p>Dashboard</p>
-</div>
+    <main class="main-panel" id="top">
+      <div class="topbar">
+        <div>
+          <h1>Post-COVID Risk Intelligence</h1>
+          <p>Welcome, {{ full_name }}. Clinical dashboard with future projections and country-wise analysis.</p>
+        </div>
 
-<div class="main">
+        <div class="top-actions">
+          <div class="country-box">
+            <label class="country-label">Choose Country</label>
+            <select id="countrySelect">
+              <option value="India">India</option>
+              <option value="United States">United States</option>
+              <option value="Brazil">Brazil</option>
+              <option value="Japan">Japan</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+            </select>
+          </div>
 
-<h1>COVID Analytics</h1>
+          <button id="themeToggle" class="theme-btn">🌙 Dark</button>
+        </div>
+      </div>
 
-<select id="country">
-    <option value="India">India</option>
-    <option value="United States">United States</option>
-</select>
+      <section class="signal-section">
+        <div class="signal-left">
+          <div class="signal-label">PRIMARY INTELLIGENCE SIGNAL</div>
+          <div class="signal-score" id="healthRiskScore">--</div>
+          <div class="signal-sub">Health Risk Score</div>
 
-<div class="kpi-grid">
-    <div class="card"><h4>Cases</h4><h2 id="cases"></h2></div>
-    <div class="card"><h4>Deaths</h4><h2 id="deaths"></h2></div>
-    <div class="card"><h4>Vaccinated</h4><h2 id="vacc"></h2></div>
-    <div class="card"><h4>Tomorrow</h4><h2 id="tomorrowCases"></h2></div>
-</div>
-<div class="prediction-box">
+          <div class="mini-stack">
+            <div>
+              <div class="mini-label">Trend Pressure</div>
+              <div class="mini-value" id="trendPressure">--</div>
+            </div>
+            <div>
+              <div class="mini-label">Vaccination Shield</div>
+              <div class="mini-value" id="vaccinationShieldTop">--</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <h3>Predict Tomorrow Cases</h3>
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-title">Healthcare Strain</div>
+          <div class="stat-value" id="healthcareStrain">--</div>
+          <div class="stat-sub">System pressure estimate</div>
+        </div>
 
-    <label>Vaccination (increase)</label>
-    <input type="number" id="vaccInput" placeholder="e.g. +10000">
+        <div class="stat-card">
+          <div class="stat-title">Recovery Readiness</div>
+          <div class="stat-value" id="recoveryReadiness">--</div>
+          <div class="stat-sub">Recovery resilience score</div>
+        </div>
 
-    <label>Deaths (expected)</label>
-    <input type="number" id="deathInput" placeholder="e.g. +100">
+        <div class="stat-card">
+          <div class="stat-title">Vaccination Shield</div>
+          <div class="stat-value" id="vaccinationShield">--</div>
+          <div class="stat-sub">Protective coverage effect</div>
+        </div>
 
-    <button onclick="runPrediction()">Predict</button>
+        <div class="stat-card highlight-card">
+          <div class="stat-title">Projected 2027 Health Risk</div>
+          <div class="stat-value" id="predHealthRisk">--</div>
+          <div class="stat-sub">Future scenario output</div>
+        </div>
+      </section>
 
-    <h2 id="result"></h2>
+      <section class="stats-row" id="reactiveSection">
+        <div class="stat-card">
+          <div class="stat-title">Strain Monitor</div>
+          <div class="stat-value" id="strainStatus">--</div>
+          <div class="stat-sub" id="strainSub">Variant pressure state</div>
+        </div>
 
-</div>
-<button onclick="runPrediction()">Predict</button>
-<div class="chart-container">
-    <canvas id="casesChart"></canvas>
-</div>
-<div class="row">
+        <div class="stat-card">
+          <div class="stat-title">Recovery View</div>
+          <div class="stat-value" id="recoveryViewStatus">--</div>
+          <div class="stat-sub" id="recoveryViewSub">Recovery trend state</div>
+        </div>
 
-    <!-- Deaths Graph -->
-    <div class="box">
-        <h3>Deaths Trend</h3>
-        <canvas id="deathsChart"></canvas>
-    </div>
+        <div class="stat-card highlight-card">
+          <div class="stat-title">Projected 2027 Healthcare Strain</div>
+          <div class="stat-value" id="predHealthcareStrain">--</div>
+          <div class="stat-sub">Scenario-adjusted pressure</div>
+        </div>
 
-    <!-- Insights -->
-    <div class="box">
-        <h3>Insights</h3>
-        <p>Vaccination reduces growth rate</p>
-        <p>Deaths follow case spikes</p>
-        <p>Policy impacts spread</p>
-    </div>
+        <div class="stat-card highlight-card">
+          <div class="stat-title">Projected 2027 Recovery</div>
+          <div class="stat-value" id="predRecoveryReadiness">--</div>
+          <div class="stat-sub">Recovery under scenario</div>
+        </div>
+      </section>
 
-</div>
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-title">Reinfection Risk</div>
+          <div class="stat-value" id="reinfectionRisk">--</div>
+          <div class="stat-sub">Future recurrence likelihood</div>
+        </div>
 
-<div class="r-grid">
-    <img src="/static/cases.png">
-    <img src="/static/deaths.png">
-    <img src="/static/vaccine.png">
-    <img src="/static/heatmap.png">
-</div>
+        <div class="stat-card">
+          <div class="stat-title">Long COVID Impact</div>
+          <div class="stat-value" id="longCovid">--</div>
+          <div class="stat-sub">Long-term recovery burden</div>
+        </div>
 
-</div>
-</div>
+        <div class="stat-card">
+          <div class="stat-title">Collapse Risk</div>
+          <div class="stat-value" id="collapseRisk">--</div>
+          <div class="stat-sub">Healthcare overload probability</div>
+        </div>
 
-<script src="/static/script.js"></script>
+        <div class="stat-card">
+          <div class="stat-title">Mental Stress Index</div>
+          <div class="stat-value" id="mentalStress">--</div>
+          <div class="stat-sub">Pandemic stress intensity</div>
+        </div>
+      </section>
+
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-title">Future Heart Risk</div>
+          <div class="stat-value" id="futureHeartRisk">--</div>
+          <div class="stat-sub">Post-COVID cardiovascular burden</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Future Lung Risk</div>
+          <div class="stat-value" id="futureLungRisk">--</div>
+          <div class="stat-sub">Respiratory complication pressure</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Future Diabetes Risk</div>
+          <div class="stat-value" id="futureDiabetesRisk">--</div>
+          <div class="stat-sub">Metabolic vulnerability outlook</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Neuro / Mental Risk</div>
+          <div class="stat-value" id="futureNeuroRisk">--</div>
+          <div class="stat-sub">Neurological and mental stress outlook</div>
+        </div>
+      </section>
+
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-title">Long COVID Burden</div>
+          <div class="stat-value" id="futureLongCovidBurden">--</div>
+          <div class="stat-sub">Projected chronic post-COVID load</div>
+        </div>
+
+        <div class="stat-card highlight-card">
+          <div class="stat-title">Projected 2027 Vaccination Shield</div>
+          <div class="stat-value" id="predVaccinationShield">--</div>
+          <div class="stat-sub">Protection after scenario adjustment</div>
+        </div>
+
+        <div class="stat-card highlight-card">
+          <div class="stat-title">Projected 2027 Trend Pressure</div>
+          <div class="stat-value" id="predTrendPressure">--</div>
+          <div class="stat-sub">Overall future trend movement</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Country Projection Mode</div>
+          <div class="stat-value" id="countryProjectionLabel">Active</div>
+          <div class="stat-sub">Country-wise simulation enabled</div>
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="big-chart-card">
+          <div class="card-head">
+            <h2>Cases Pressure Trend</h2>
+            <span>Historical stress movement</span>
+          </div>
+          <img src="{{ url_for('static', filename='cases.png') }}" alt="Cases Trend" class="chart-img" />
+        </div>
+
+        <div class="simulator-card">
+          <div class="card-head">
+            <h2>2027 Scenario Simulator</h2>
+            <span>Adjust public health conditions</span>
+          </div>
+
+          <label>Projection Year</label>
+          <select id="projectionYear" class="select-box">
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027" selected>2027</option>
+          </select>
+
+          <label>Vaccination Increase</label>
+          <input type="number" id="vaccInput" placeholder="1000" />
+
+          <label>Expected Death Pressure</label>
+          <input type="number" id="deathInput" placeholder="10" />
+
+          <button id="predictBtn" class="primary-btn red-btn">Run Simulation</button>
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="graph-grid" id="graphsSection">
+        <div class="graph-card">
+          <div class="graph-title">Deaths Analysis</div>
+          <img src="{{ url_for('static', filename='deaths.png') }}" alt="Deaths Graph" class="chart-img small-img" />
+        </div>
+
+        <div class="graph-card">
+          <div class="graph-title">Heatmap View</div>
+          <img src="{{ url_for('static', filename='heatmap.png') }}" alt="Heatmap Graph" class="chart-img small-img" />
+        </div>
+
+        <div class="graph-card">
+          <div class="graph-title">Histogram Distribution</div>
+          <img src="{{ url_for('static', filename='hist.png') }}" alt="Histogram Graph" class="chart-img small-img" />
+        </div>
+
+        <div class="graph-card">
+          <div class="graph-title">Trend Analytics</div>
+          <img src="{{ url_for('static', filename='trend.png') }}" alt="Trend Graph" class="chart-img small-img" />
+        </div>
+
+        <div class="graph-card">
+          <div class="graph-title">Vaccination Insights</div>
+          <img src="{{ url_for('static', filename='vaccine.png') }}" alt="Vaccine Graph" class="chart-img small-img" />
+        </div>
+      </section>
+    </main>
+  </div>
+  <section class="graph-grid">
+  <div class="graph-card full-span">
+    <div class="graph-title">Live Public Health News</div>
+    <div id="newsStatus" class="stat-sub" style="margin-bottom: 12px;">Loading latest headlines...</div>
+    <div id="newsList" class="news-list"></div>
+  </div>
+</section>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
