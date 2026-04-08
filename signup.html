@@ -1,27 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Signup</title>
-<link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthify Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
+<body class="auth-page">
+  <div class="auth-shell">
+    <div class="auth-left red alt">
+      <div>
+        <h1 class="brand">HEALTH<span>IFY</span></h1>
+        <div class="badge">● CREATE CLINICAL ACCESS</div>
+        <p class="lead">
+          Create your account to access surveillance dashboards, predictive analytics,
+          and healthcare intelligence.
+        </p>
+      </div>
 
-<body class="auth-body">
+      <div class="status-wrap">
+        <div class="status-card">
+          <h3>Secure</h3>
+          <p>Password policy + OTP-ready flow</p>
+          <small>Clinical-grade access</small>
+        </div>
 
-<div class="auth-container">
+        <div class="status-card">
+          <h3>Google</h3>
+          <p>Optional OAuth sign-up support</p>
+          <small>Fast enterprise onboarding</small>
+        </div>
+      </div>
 
-    <h2>Create Account</h2>
+      <div class="compliance">
+        Use valid contact details for recovery and OTP flows.
+      </div>
+    </div>
 
-    <form method="POST" action="/signup">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+    <div class="auth-right">
+      <div class="section-tag">CREATE ACCOUNT</div>
+      <h2>Create your account</h2>
+      <p class="subtitle">Fill the details below to register.</p>
 
-        <button type="submit">Sign Up</button>
-    </form>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-box">
+            {% for message in messages %}
+              <div class="flash-item">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
 
-    <p>Already have an account?</p>
-    <a href="/">Login</a>
+      <form method="POST" class="auth-form" onsubmit="return validateSignupPassword()">
+        <label>FULL NAME</label>
+        <input type="text" name="full_name" required>
 
-</div>
+        <label>ROLE</label>
+        <select name="role" class="select-box">
+          <option>Clinician</option>
+          <option>Researcher</option>
+          <option>Admin</option>
+          <option>Policy Officer</option>
+        </select>
 
+        <label>COUNTRY</label>
+        <select name="country" class="select-box">
+          <option>India</option>
+          <option>United States</option>
+          <option>Brazil</option>
+          <option>Japan</option>
+          <option>Germany</option>
+          <option>France</option>
+          <option>Other</option>
+        </select>
+
+        <label>EMAIL</label>
+        <input type="email" name="email" required>
+
+        <label>PHONE NUMBER</label>
+        <input type="text" name="phone" required>
+
+        <label>USERNAME</label>
+        <input type="text" name="username" required>
+
+        <label>PREVIOUS MEDICAL CONDITIONS</label>
+        <textarea name="previous_medical_conditions" rows="3" class="text-area" placeholder="e.g. asthma, diabetes, hypertension"></textarea>
+
+        <label>PASSWORD</label>
+        <div class="password-wrap">
+          <input type="password" name="password" id="signupPassword" required>
+          <button type="button" class="small-btn" onclick="togglePassword('signupPassword', this)">Show</button>
+        </div>
+
+        <div class="password-hint">
+          Must contain at least <strong>4 letters</strong>, <strong>1 number</strong>, and <strong>1 special character</strong>.
+        </div>
+
+        <div class="password-actions">
+          <button type="button" class="outline-btn" onclick="suggestPassword()">Need strong suggestion?</button>
+          <div id="suggestedPassword" class="suggestion-box"></div>
+        </div>
+
+        <label>CONFIRM PASSWORD</label>
+        <input type="password" name="confirm_password" id="confirmPassword" required>
+
+        <label class="checkbox-line">
+          <input type="checkbox" name="two_factor_enabled">
+          <span>Enable OTP for login</span>
+        </label>
+
+        <button type="submit" class="primary-btn red-btn">Create account</button>
+      </form>
+
+      <div class="separator"><span>or</span></div>
+
+      {% if google_enabled %}
+        <a class="google-btn" href="{{ url_for('google_login') }}">Sign up with Google</a>
+      {% else %}
+        <button class="google-btn disabled-btn" type="button">Google sign-up not configured</button>
+      {% endif %}
+
+      <div class="bottom-links">
+        <a href="{{ url_for('login') }}">Already have an account? Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
 </body>
 </html>
